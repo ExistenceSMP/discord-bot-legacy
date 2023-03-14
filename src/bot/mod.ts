@@ -101,19 +101,12 @@ export class ExistenceSMP extends Client {
                 {
                   name: "Useful Links",
                   value: [
-                    `<:logo_existence_smp_s2:952367758820126790> [existencesmp.com](https://existencesmp.com)`,
-                    `:scroll: [existencesmp.com/rules](https://existencesmp.com/rules)`,
+                    `<:logo_existence_smp_s2:952367758820126790> [Website](https://existencesmp.com)`,
+                    `:scroll: [Rules](https://existencesmp.com/rules)`,
                     "",
                     `:technologist: [Source Code](https://github.com/ExistenceSMP/existence-smp-discord-bot)`,
                     `:bug: [Bug Reports](https://github.com/ExistenceSMP/existence-smp-discord-bot/issues)`,
                   ].join("\n"),
-                  inline: true,
-                },
-                {
-                  name: "Contributors",
-                  value: contributors
-                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
-                    .join("\n"),
                   inline: true,
                 },
                 {
@@ -125,6 +118,13 @@ export class ExistenceSMP extends Client {
                     `<:icon_patreon:368253238618619905> [patreon.com/ExistenceSMP](https://patreon.com/ExistenceSMP)`,
                     `<:icon_discord:244473644871450625> [existencesmp.com/discord](https://existencesmp.com/discord)`,
                   ].join("\n"),
+                  inline: true,
+                },
+                {
+                  name: "Contributors",
+                  value: contributors
+                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
+                    .join("\n"),
                   inline: false,
                 },
                 {
