@@ -3,6 +3,7 @@ import { exists } from "https://deno.land/std@0.170.0/fs/exists.ts";
 import { TextChannel } from "../deps.ts";
 
 import { ExistenceSMP } from "../bot/mod.ts";
+import { isCanary } from "../index.ts";
 
 interface WeeklyScreenshot {
   imageUrl: string;
@@ -13,7 +14,7 @@ export let weekCache: { [key: number]: WeeklyScreenshot } = {};
 
 export async function populateCache(client: ExistenceSMP) {
   if (
-    Deno.env.get("DEV_GUILD") &&
+    isCanary() &&
     (await exists("./devcache.json")) &&
     (await Deno.readTextFile("./devcache.json")) != ""
   ) {
@@ -78,7 +79,7 @@ export async function populateCache(client: ExistenceSMP) {
     );
   }
   console.log(`[IMAGES] 100.00% Cache Populated (${getLatestWeek()} Weeks)`);
-  if (Deno.env.get("DEV_GUILD")) {
+  if (isCanary()) {
     Deno.writeTextFile("./devcache.json", JSON.stringify(weekCache));
   }
 }

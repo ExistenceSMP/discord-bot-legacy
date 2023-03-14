@@ -12,6 +12,7 @@ import {
   getWeeklyScreenshot,
   isValidWeek,
 } from "../images/mod.ts";
+import { isCanary } from "../index.ts";
 
 import { embed, errorEmbed } from "../lib/embed.ts";
 
@@ -23,22 +24,28 @@ export class ExistenceSMP extends Client {
   ready() {
     console.log("Ready!");
 
-    this.setPresence({
-      name: "Community Server 2",
-      type: 0,
-    });
+    if (isCanary()) {
+      console.log(`[CANARY] Development environment detected`);
 
-    if (Deno.env.get("DEV_GUILD")) {
-      console.log(`[DEV] Development environment detected`);
+      this.setPresence({
+        name: "for bugs",
+        type: 3,
+      });
+
       this.interactions.commands
         .bulkEdit(commands, Deno.env.get("DEV_GUILD"))
-        .then((cmds) => console.log(`[DEV] Loaded ${cmds.size} commands`))
-        .catch(() => `[DEV] Failed to load commands`);
+        .then((cmds) => console.log(`[CANARY] Loaded ${cmds.size} commands`))
+        .catch(() => `[CANARY] Failed to load commands`);
     } else
-      this.interactions.commands
-        .bulkEdit(commands)
-        .then((cmds) => console.log(`[GLOBAL] Loaded ${cmds.size} commands`))
-        .catch(() => `[GLOBAL] Failed to load commands`);
+      this.setPresence({
+        name: "Community Server 2",
+        type: 0,
+      });
+
+    this.interactions.commands
+      .bulkEdit(commands)
+      .then((cmds) => console.log(`[PROD] Loaded ${cmds.size} commands`))
+      .catch(() => `[PROD] Failed to load commands`);
   }
 
   @slash()
@@ -78,7 +85,9 @@ export class ExistenceSMP extends Client {
                 },
                 {
                   name: "Deployment",
-                  value: `\`${Deno.hostname()}\``,
+                  value: !isCanary()
+                    ? `\`${Deno.hostname()}\``
+                    : `\`canary (${Deno.hostname()})\``,
                   inline: true,
                 },
                 {

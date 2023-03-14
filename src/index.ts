@@ -8,6 +8,8 @@ import { app } from "./web/mod.ts";
 
 export const bot = new ExistenceSMP();
 
+export const isCanary = () => Deno.env.get("DEV_GUILD") != undefined;
+
 bot.connect(Deno.env.get("DISCORD_TOKEN"), Intents.NonPrivileged);
 
 populateCache(bot);
