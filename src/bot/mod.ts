@@ -117,6 +117,17 @@ export class ExistenceSMP extends Client {
                   inline: true,
                 },
                 {
+                  name: "Social Media",
+                  value: [
+                    `<:icon_youtube:244472434172887040> [youtube.com/ExistenceSMP](https://youtube.com/ExistenceSMP)`,
+                    `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMP](https://twitter.com/ExistenceSMP)`,
+                    `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMPQ](https://twitter.com/ExistenceSMPQ)`,
+                    `<:icon_patreon:368253238618619905> [patreon.com/ExistenceSMP](https://patreon.com/ExistenceSMP)`,
+                    `<:icon_discord:244473644871450625> [existencesmp.com/discord](https://existencesmp.com/discord)`,
+                  ].join("\n"),
+                  inline: false,
+                },
+                {
                   name: "Deployment",
                   value: !isCanary()
                     ? `\`${Deno.hostname()}\``
@@ -130,17 +141,6 @@ export class ExistenceSMP extends Client {
                   )}:f> (<t:${Math.floor(
                     (this.upSince?.getTime() || 0) / 1000
                   )}:R>)`,
-                  inline: true,
-                },
-                {
-                  name: "Social Media",
-                  value: [
-                    `<:icon_youtube:244472434172887040> [youtube.com/ExistenceSMP](https://youtube.com/ExistenceSMP)`,
-                    `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMP](https://twitter.com/ExistenceSMP)`,
-                    `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMPQ](https://twitter.com/ExistenceSMPQ)`,
-                    `<:icon_patreon:368253238618619905> [patreon.com/ExistenceSMP](https://patreon.com/ExistenceSMP)`,
-                    `<:icon_discord:244473644871450625> [existencesmp.com/discord](https://existencesmp.com/discord)`,
-                  ].join("\n"),
                   inline: true,
                 },
               ],
