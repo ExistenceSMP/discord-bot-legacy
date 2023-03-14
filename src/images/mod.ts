@@ -42,6 +42,7 @@ export async function populateCache(client: ExistenceSMP) {
         ).slice(1);
         currentWeek = +match[1];
         if (
+          isCanary() &&
           weekCache[currentWeek] &&
           weekCache[currentWeek].imageUrl == message.attachments[1].proxy_url
         )

@@ -14,5 +14,9 @@ bot.connect(Deno.env.get("DISCORD_TOKEN"), Intents.NonPrivileged);
 
 populateCache(bot);
 
+setInterval(() => {
+  populateCache(bot);
+}, 8.64e7);
+
 app.listen({ port: 8080 });
 console.log("[WEB] Web started on port 8080");

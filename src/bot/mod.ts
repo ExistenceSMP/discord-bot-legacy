@@ -3,6 +3,7 @@ import {
   event,
   Interaction,
   InteractionApplicationCommandData,
+  Message,
   slash,
   subslash,
 } from "../deps.ts";
@@ -11,6 +12,7 @@ import {
   getLatestWeek,
   getWeeklyScreenshot,
   isValidWeek,
+  setCache,
 } from "../images/mod.ts";
 import { isCanary } from "../index.ts";
 
@@ -46,6 +48,26 @@ export class ExistenceSMP extends Client {
       .bulkEdit(commands)
       .then((cmds) => console.log(`[PROD] Loaded ${cmds.size} commands`))
       .catch(() => `[PROD] Failed to load commands`);
+  }
+
+  @event()
+  messageCreate(message: Message) {
+    if (
+      message.channel.id == "191027546710736897" && // #chat
+      message.author.id == "384428466407473153" && // mcpeachpies
+      message.content.match(/Week [0-9]+ vs Week [0-9]+/g) // Week X vs Week Y
+    ) {
+      console.log(message.content);
+      const match = (
+        message.content.matchAll(/Week ([0-9]+) vs Week ([0-9]+)/g).next()
+          .value as string[]
+      ).slice(1);
+      setCache(
+        +match[1],
+        message.attachments[1].proxy_url,
+        `https://discord.com/channels/191027546710736897/191027546710736897/${message.id}`
+      );
+    }
   }
 
   @slash()
