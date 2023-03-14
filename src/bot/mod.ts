@@ -110,6 +110,13 @@ export class ExistenceSMP extends Client {
                   inline: true,
                 },
                 {
+                  name: "Contributors",
+                  value: contributors
+                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
+                    .join("\n"),
+                  inline: true,
+                },
+                {
                   name: "Social Media",
                   value: [
                     `<:icon_youtube:244472434172887040> [youtube.com/ExistenceSMP](https://youtube.com/ExistenceSMP)`,
@@ -118,13 +125,6 @@ export class ExistenceSMP extends Client {
                     `<:icon_patreon:368253238618619905> [patreon.com/ExistenceSMP](https://patreon.com/ExistenceSMP)`,
                     `<:icon_discord:244473644871450625> [existencesmp.com/discord](https://existencesmp.com/discord)`,
                   ].join("\n"),
-                  inline: true,
-                },
-                {
-                  name: "Contributors",
-                  value: contributors
-                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
-                    .join("\n"),
                   inline: false,
                 },
                 {
