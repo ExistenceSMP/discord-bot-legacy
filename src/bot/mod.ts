@@ -99,13 +99,6 @@ export class ExistenceSMP extends Client {
                 "The Existence SMP Discord Bot is a multi-purpose Discord bot created for the Existence SMP Community Discord server.",
               fields: [
                 {
-                  name: "Contributors",
-                  value: contributors
-                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
-                    .join("\n"),
-                  inline: false,
-                },
-                {
                   name: "Deployment",
                   value: !isCanary()
                     ? `\`${Deno.hostname()}\``
@@ -122,6 +115,13 @@ export class ExistenceSMP extends Client {
                   inline: true,
                 },
                 {
+                  name: "Contributors",
+                  value: contributors
+                    .map((x) => `<:${x.emoji.name}:${x.emoji.id}> <@${x.id}>`)
+                    .join("\n"),
+                  inline: false,
+                },
+                {
                   name: "Useful Links",
                   value: [
                     `<:logo_existence_smp_s2:952367758820126790> [existencesmp.com](https://existencesmp.com)`,
@@ -130,7 +130,7 @@ export class ExistenceSMP extends Client {
                     `:technologist: [Source Code](https://github.com/ExistenceSMP/existence-smp-discord-bot)`,
                     `:bug: [Bug Reports](https://github.com/ExistenceSMP/existence-smp-discord-bot/issues)`,
                   ].join("\n"),
-                  inline: false,
+                  inline: true,
                 },
                 {
                   name: "Social Media",
