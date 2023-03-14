@@ -1,4 +1,4 @@
-import { EmojiPayload } from "./deps.ts";
+import { EmojiPayload } from "../deps.ts";
 
 interface Contributor {
   id: string;
