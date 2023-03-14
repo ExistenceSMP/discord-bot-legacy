@@ -21,7 +21,7 @@ export async function populateCache(client: ExistenceSMP) {
     weekCache = JSON.parse(await Deno.readTextFile("./devcache.json"));
   }
 
-  let chat = (await (
+  const chat = (await (
     await client.guilds.fetch("191027546710736897")
   ).channels.fetch("191027546710736897")) as TextChannel;
 

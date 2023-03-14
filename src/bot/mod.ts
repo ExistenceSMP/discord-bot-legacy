@@ -1,11 +1,19 @@
 import {
+  ActionRowComponent,
+  ApplicationCommandInteraction,
+  autocomplete,
+  AutocompleteInteraction,
+  ButtonComponent,
   Client,
   event,
   Interaction,
   InteractionApplicationCommandData,
+  InteractionMessageComponentData,
+  InteractionType,
   Message,
+  MessageComponentInteraction,
   slash,
-  subslash,
+  TextChannel,
 } from "../deps.ts";
 
 import {
@@ -13,6 +21,7 @@ import {
   getWeeklyScreenshot,
   isValidWeek,
   setCache,
+  weekCache,
 } from "../images/mod.ts";
 import { isCanary } from "../index.ts";
 
@@ -35,19 +44,24 @@ export class ExistenceSMP extends Client {
       });
 
       this.interactions.commands
+        .bulkEdit([])
+        .then(() => console.log(`[CANARY] Flushed global commands`))
+        .catch(() => console.log(`[CANARY] Failed to flush global commands`));
+      this.interactions.commands
         .bulkEdit(commands, Deno.env.get("DEV_GUILD"))
         .then((cmds) => console.log(`[CANARY] Loaded ${cmds.size} commands`))
         .catch(() => `[CANARY] Failed to load commands`);
-    } else
+    } else {
       this.setPresence({
         name: "Community Server 2",
         type: 0,
       });
 
-    this.interactions.commands
-      .bulkEdit(commands)
-      .then((cmds) => console.log(`[PROD] Loaded ${cmds.size} commands`))
-      .catch(() => `[PROD] Failed to load commands`);
+      this.interactions.commands
+        .bulkEdit(commands)
+        .then((cmds) => console.log(`[PROD] Loaded ${cmds.size} commands`))
+        .catch(() => `[PROD] Failed to load commands`);
+    }
   }
 
   @event()
@@ -70,13 +84,121 @@ export class ExistenceSMP extends Client {
     }
   }
 
+  @event()
+  async interactionCreate(i: Interaction) {
+    if (i.type == InteractionType.MESSAGE_COMPONENT) {
+      const customId = (i.data as InteractionMessageComponentData).custom_id;
+      if (customId == "screenshot_next") {
+        const message = i.message!;
+        const currentWeek = +(
+          (message.components[0] as ActionRowComponent).components.find(
+            (x) => (x as ButtonComponent).customID == "screenshot_current"
+          )! as ButtonComponent
+        ).label.replace("Week ", "");
+        const newWeek = currentWeek + 1;
+        if (isValidWeek(newWeek)) {
+          const screenshot = getWeeklyScreenshot(newWeek);
+
+          (i as MessageComponentInteraction).updateMessage({
+            embeds: [
+              embed(`Weekly Screenshot`, {
+                description: `Jump to [Week ${newWeek}](${screenshot.messageUrl})`,
+                image: {
+                  url: screenshot.imageUrl,
+                },
+              }),
+            ],
+            components: [
+              {
+                type: "ACTION_ROW",
+                components: [
+                  {
+                    type: "BUTTON",
+                    style: "PRIMARY",
+                    label: `⬅️ Week ${newWeek - 1}`,
+                    customID: `screenshot_previous`,
+                    disabled: !isValidWeek(newWeek - 1),
+                  },
+                  {
+                    type: "BUTTON",
+                    style: "GREY",
+                    label: `Week ${newWeek}`,
+                    customID: `screenshot_current`,
+                    disabled: true,
+                  },
+                  {
+                    type: "BUTTON",
+                    style: "PRIMARY",
+                    label: `Week ${newWeek + 1} ➡️`,
+                    customID: `screenshot_next`,
+                    disabled: !isValidWeek(newWeek + 1),
+                  },
+                ],
+              },
+            ],
+          });
+        } else {
+          (i as MessageComponentInteraction).updateMessage({});
+        }
+      } else if (customId == "screenshot_previous") {
+        const message = i.message!;
+        const currentWeek = +(
+          (message.components[0] as ActionRowComponent).components.find(
+            (x) => (x as ButtonComponent).customID == "screenshot_current"
+          )! as ButtonComponent
+        ).label.replace("Week ", "");
+        const newWeek = currentWeek - 1;
+        if (isValidWeek(newWeek)) {
+          const screenshot = getWeeklyScreenshot(newWeek);
+
+          (i as MessageComponentInteraction).updateMessage({
+            embeds: [
+              embed(`Weekly Screenshot`, {
+                description: `Jump to [Week ${newWeek}](${screenshot.messageUrl})`,
+                image: {
+                  url: screenshot.imageUrl,
+                },
+              }),
+            ],
+            components: [
+              {
+                type: "ACTION_ROW",
+                components: [
+                  {
+                    type: "BUTTON",
+                    style: "PRIMARY",
+                    label: `⬅️ Week ${newWeek - 1}`,
+                    customID: `screenshot_previous`,
+                    disabled: !isValidWeek(newWeek - 1),
+                  },
+                  {
+                    type: "BUTTON",
+                    style: "GREY",
+                    label: `Week ${newWeek}`,
+                    customID: `screenshot_current`,
+                    disabled: true,
+                  },
+                  {
+                    type: "BUTTON",
+                    style: "PRIMARY",
+                    label: `Week ${newWeek + 1} ➡️`,
+                    customID: `screenshot_next`,
+                    disabled: !isValidWeek(newWeek + 1),
+                  },
+                ],
+              },
+            ],
+          });
+        } else {
+          (i as MessageComponentInteraction).updateMessage({});
+        }
+      }
+    }
+  }
+
   @slash()
-  info(i: Interaction) {
-    switch (
-      (i.data as InteractionApplicationCommandData).options
-        ? (i.data as InteractionApplicationCommandData).options[0].value
-        : "bot"
-    ) {
+  info(i: ApplicationCommandInteraction) {
+    switch (i.data.options ? i.data.options[0].value : "bot") {
       case "cs2": {
         i.reply("https://existencesmp.com/server");
         break;
@@ -153,8 +275,8 @@ export class ExistenceSMP extends Client {
   }
 
   @slash()
-  map(i: Interaction) {
-    switch ((i.data as InteractionApplicationCommandData).options[0].value) {
+  map(i: ApplicationCommandInteraction) {
+    switch (i.data.options[0].value) {
       case "cs2": {
         i.reply("https://map.existencesmp.com");
         break;
@@ -181,31 +303,33 @@ export class ExistenceSMP extends Client {
   }
 
   @slash()
-  screenshot(i: Interaction) {
-    const data = i.data as InteractionApplicationCommandData;
+  async screenshot(i: ApplicationCommandInteraction) {
+    const { data } = i;
 
-    const week = data.options
-      ? (data.options.find((x) => x.name == "week")?.value as number)
-      : getLatestWeek();
-    const compareTo = data.options
-      ? (data.options.find((x) => x.name == "compare_to")?.value as number)
-      : undefined;
+    const week =
+      data.options && data.options.find((x) => x.name == "week")
+        ? (data.options.find((x) => x.name == "week")?.value as number)
+        : getLatestWeek();
+    const compareTo =
+      data.options && data.options.find((x) => x.name == "compare_to")
+        ? (data.options.find((x) => x.name == "compare_to")?.value as number)
+        : undefined;
 
     if (isValidWeek(week)) {
-      if (compareTo && isValidWeek(compareTo)) {
+      if (compareTo != undefined && isValidWeek(compareTo)) {
         const screenshotOne = getWeeklyScreenshot(week);
         const screenshotTwo = getWeeklyScreenshot(compareTo);
 
         i.reply({
           embeds: [
-            embed(`Week ${week} vs Week ${compareTo}`, {
+            embed(`Weekly Screenshot`, {
               url: `https://existencesmp.com/server`,
-              description: `[Jump to Week ${week}](${screenshotOne.messageUrl})\n[Jump to Week ${compareTo}](${screenshotTwo.messageUrl})`,
+              description: `Jump to [Week ${week}](${screenshotOne.messageUrl}) vs [Week ${compareTo}](${screenshotTwo.messageUrl})`,
               image: {
                 url: screenshotOne.imageUrl,
               },
             }),
-            embed(`Week ${week} vs Week ${compareTo}`, {
+            embed(`Weekly Screenshot`, {
               url: `https://existencesmp.com/server`,
               image: {
                 url: screenshotTwo.imageUrl,
@@ -216,21 +340,79 @@ export class ExistenceSMP extends Client {
       } else {
         const screenshot = getWeeklyScreenshot(week);
 
-        i.reply({
+        await i.reply({
           embeds: [
-            embed(`Week ${week}`, {
-              description: `[Jump to Week ${week}](${screenshot.messageUrl})`,
+            embed(`Weekly Screenshot`, {
+              description: `Jump to [Week ${week}](${screenshot.messageUrl})`,
               image: {
                 url: screenshot.imageUrl,
               },
             }),
           ],
         });
+        const response = await i.fetchResponse();
+        i.editResponse({
+          embeds: response.embeds,
+          components: [
+            {
+              type: "ACTION_ROW",
+              components: [
+                {
+                  type: "BUTTON",
+                  style: "PRIMARY",
+                  label: `⬅️ Week ${week - 1}`,
+                  customID: `screenshot_previous`,
+                  disabled: !isValidWeek(week - 1),
+                },
+                {
+                  type: "BUTTON",
+                  style: "GREY",
+                  label: `Week ${week}`,
+                  customID: `screenshot_current`,
+                  disabled: true,
+                },
+                {
+                  type: "BUTTON",
+                  style: "PRIMARY",
+                  label: `Week ${week + 1} ➡️`,
+                  customID: `screenshot_next`,
+                  disabled: !isValidWeek(week + 1),
+                },
+              ],
+            },
+          ],
+        });
       }
     } else {
       i.reply({
-        embeds: [errorEmbed({ description: `Week ${week} is not valid` })],
+        embeds: [errorEmbed({ description: `Week \`${week}\` is not valid` })],
       });
     }
+  }
+
+  @autocomplete("screenshot", "week")
+  screenshotWeekCompletion(i: AutocompleteInteraction) {
+    return i.autocomplete(
+      Object.keys(weekCache)
+        .map((x) => ({ name: x, value: +x }))
+        .filter((x) =>
+          x.name.startsWith(i.data.options.find((x) => x.name == "week")!.value)
+        )
+        .slice(0, 25)
+    );
+  }
+
+  @autocomplete("screenshot", "compare_to")
+  screenshotCompareToCompletion(i: AutocompleteInteraction) {
+    return i.autocomplete(
+      Object.keys(weekCache)
+        .map((x) => ({ name: x, value: +x }))
+        .filter((x) =>
+          x.name.startsWith(
+            i.data.options.find((x) => x.name == "compare_to")!.value
+          )
+        )
+        .slice(0, 25)
+    );
   }
 }
