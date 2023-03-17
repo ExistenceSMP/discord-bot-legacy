@@ -105,22 +105,13 @@ export class ExistenceSMP extends Client {
 
     let timestamp = 0;
 
-    if (dayjs().weekday(3).isBefore(dayjs())) {
-      setTimeout(
-        this.waddleDeeWednesday,
-        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
-      );
-      timestamp = Math.floor(
-        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf() / 1000
-      );
+    const wednesday = dayjs().weekday(3).hour(4).minute(0).second(0);
+    if (wednesday.isBefore(dayjs())) {
+      setTimeout(this.waddleDeeWednesday, +wednesday.weekday(10).valueOf());
+      timestamp = Math.floor(+wednesday.weekday(10).valueOf() / 1000);
     } else {
-      setTimeout(
-        this.waddleDeeWednesday,
-        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
-      );
-      timestamp = Math.floor(
-        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf() / 1000
-      );
+      setTimeout(this.waddleDeeWednesday, +wednesday.valueOf());
+      timestamp = Math.floor(+wednesday.valueOf() / 1000);
     }
 
     await thread.send(`<@244236398348075010>`, {
