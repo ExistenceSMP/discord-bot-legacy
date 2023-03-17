@@ -7,14 +7,16 @@ import {
   Client,
   event,
   Interaction,
-  InteractionApplicationCommandData,
   InteractionMessageComponentData,
   InteractionType,
   Message,
   MessageComponentInteraction,
   slash,
-  TextChannel,
+  ThreadChannel,
 } from "../deps.ts";
+import dayjs from "npm:dayjs@1.11.7";
+import weekday from "npm:dayjs@1.11.7/plugin/weekday.js";
+import timezone from "npm:dayjs@1.11.7/plugin/timezone.js";
 
 import {
   getLatestWeek,
@@ -29,6 +31,10 @@ import { embed, errorEmbed } from "../lib/embed.ts";
 
 import { commands } from "./commands.ts";
 import { contributors } from "./config.ts";
+
+dayjs.extend(weekday);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("America/Los_Angeles");
 
 export class ExistenceSMP extends Client {
   @event()
@@ -62,6 +68,71 @@ export class ExistenceSMP extends Client {
         .then((cmds) => console.log(`[PROD] Loaded ${cmds.size} commands`))
         .catch(() => `[PROD] Failed to load commands`);
     }
+
+    if (dayjs().weekday(3).isBefore(dayjs())) {
+      setTimeout(
+        this.waddleDeeWednesday,
+        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
+      );
+      console.log(
+        `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
+          .weekday(10)
+          .hour(4)
+          .minute(0)
+          .second(0)
+          .format()}`
+      );
+    } else {
+      setTimeout(
+        this.waddleDeeWednesday,
+        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
+      );
+      console.log(
+        `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
+          .weekday(3)
+          .hour(4)
+          .minute(0)
+          .second(0)
+          .format()}`
+      );
+    }
+  }
+
+  async waddleDeeWednesday() {
+    const thread = (await (
+      await this.guilds.fetch("191027546710736897")
+    ).channels.fetch("1070341143168032798")) as ThreadChannel;
+
+    let timestamp = 0;
+
+    if (dayjs().weekday(3).isBefore(dayjs())) {
+      setTimeout(
+        this.waddleDeeWednesday,
+        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
+      );
+      timestamp = Math.floor(
+        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf() / 1000
+      );
+    } else {
+      setTimeout(
+        this.waddleDeeWednesday,
+        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
+      );
+      timestamp = Math.floor(
+        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf() / 1000
+      );
+    }
+
+    await thread.send(`<@244236398348075010>`, {
+      embeds: [
+        embed("Happy Waddle-Dee Wednesday!", {
+          image: {
+            url: "https://cdn.discordapp.com/attachments/1070341143168032798/1080487507709395089/IMG_5545.jpg",
+          },
+          description: `Next Waddle-Dee Wednesday Alert scheduled for <t:${timestamp}:F>`,
+        }),
+      ],
+    });
   }
 
   @event()
