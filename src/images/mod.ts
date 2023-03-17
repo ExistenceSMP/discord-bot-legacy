@@ -24,6 +24,9 @@ export async function populateCache(client: ExistenceSMP) {
   const chat = (await (
     await client.guilds.fetch("191027546710736897")
   ).channels.fetch("191027546710736897")) as TextChannel;
+  const override = (await (
+    await client.guilds.fetch("1077117924751462461")
+  ).channels.fetch("1086397539990900868")) as TextChannel;
 
   let currentWeek = -1;
   let messages = await chat.fetchMessages({
@@ -83,12 +86,34 @@ export async function populateCache(client: ExistenceSMP) {
   if (isCanary()) {
     Deno.writeTextFile("./devcache.json", JSON.stringify(weekCache));
   }
+
+  let currentOverrideWeek = -1;
+  let overrideCount = 0;
+  let overrideMessages = await override.fetchMessages({
+    before: override.lastMessageID,
+    limit: 100,
+  });
+  while (currentOverrideWeek != 1) {
+    overrideMessages.forEach((message) => {
+      if (message.content.startsWith("Week ")) {
+        currentOverrideWeek = +message.content.replace("Week ", "");
+        setCache(currentOverrideWeek, message.attachments[0].proxy_url);
+        overrideCount++;
+      }
+    });
+    override.messages.flush();
+    overrideMessages = await override.fetchMessages({
+      before: overrideMessages.last()?.id,
+      limit: 100,
+    });
+  }
+  console.log(`[IMAGES] ${overrideCount} override images loaded`);
 }
 
-export function setCache(week: number, imageUrl: string, messageUrl: string) {
+export function setCache(week: number, imageUrl: string, messageUrl?: string) {
   weekCache[week] = {
     imageUrl,
-    messageUrl,
+    messageUrl: messageUrl || getWeeklyScreenshot(week).messageUrl,
   };
 }
 
