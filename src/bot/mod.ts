@@ -69,62 +69,62 @@ export class ExistenceSMP extends Client {
         .catch(() => `[PROD] Failed to load commands`);
     }
 
-    if (dayjs().weekday(3).isBefore(dayjs())) {
-      setTimeout(
-        this.waddleDeeWednesday,
-        +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
-      );
-      console.log(
-        `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
-          .weekday(10)
-          .hour(4)
-          .minute(0)
-          .second(0)
-          .format()}`
-      );
-    } else {
-      setTimeout(
-        this.waddleDeeWednesday,
-        +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
-      );
-      console.log(
-        `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
-          .weekday(3)
-          .hour(4)
-          .minute(0)
-          .second(0)
-          .format()}`
-      );
-    }
+    // if (dayjs().weekday(3).isBefore(dayjs())) {
+    //   setTimeout(
+    //     this.waddleDeeWednesday,
+    //     +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
+    //   );
+    //   console.log(
+    //     `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
+    //       .weekday(10)
+    //       .hour(4)
+    //       .minute(0)
+    //       .second(0)
+    //       .format()}`
+    //   );
+    // } else {
+    //   setTimeout(
+    //     this.waddleDeeWednesday,
+    //     +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
+    //   );
+    //   console.log(
+    //     `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
+    //       .weekday(3)
+    //       .hour(4)
+    //       .minute(0)
+    //       .second(0)
+    //       .format()}`
+    //   );
+    // }
   }
 
-  async waddleDeeWednesday() {
-    const thread = (await (
-      await this.guilds.fetch("191027546710736897")
-    ).channels.fetch("1070341143168032798")) as ThreadChannel;
+  // async waddleDeeWednesday() {
+  //   const thread = (await (
+  //     await this.guilds.fetch("191027546710736897")
+  //   ).channels.fetch("1070341143168032798")) as ThreadChannel;
 
-    let timestamp = 0;
+  //   let timestamp = 0;
 
-    const wednesday = dayjs().weekday(3).hour(4).minute(0).second(0);
-    if (wednesday.isBefore(dayjs())) {
-      setTimeout(this.waddleDeeWednesday, +wednesday.weekday(10).valueOf());
-      timestamp = Math.floor(+wednesday.weekday(10).valueOf() / 1000);
-    } else {
-      setTimeout(this.waddleDeeWednesday, +wednesday.valueOf());
-      timestamp = Math.floor(+wednesday.valueOf() / 1000);
-    }
+  //   const wednesday = dayjs().weekday(3).hour(4).minute(0).second(0);
+  //   if (wednesday.isBefore(dayjs())) {
+  //     setTimeout(this.waddleDeeWednesday, +wednesday.weekday(10).valueOf());
+  //     timestamp = Math.floor(+wednesday.weekday(10).valueOf() / 1000);
+  //   } else {
+  //     setTimeout(this.waddleDeeWednesday, +wednesday.valueOf());
+  //     timestamp = Math.floor(+wednesday.valueOf() / 1000);
+  //   }
 
-    await thread.send(`<@244236398348075010>`, {
-      embeds: [
-        embed("Happy Waddle-Dee Wednesday!", {
-          image: {
-            url: "https://cdn.discordapp.com/attachments/1070341143168032798/1080487507709395089/IMG_5545.jpg",
-          },
-          description: `Next Waddle-Dee Wednesday Alert scheduled for <t:${timestamp}:F>`,
-        }),
-      ],
-    });
-  }
+  //   await thread.send(`<@244236398348075010>`, {
+  //     embeds: [
+  //       embed("Happy Waddle-Dee Wednesday!", {
+  //         image: {
+  //           url: "https://cdn.discordapp.com/attachments/1070341143168032798/1080487507709395089/IMG_5545.jpg",
+  //         },
+  //         description: `Next Waddle-Dee Wednesday Alert scheduled for <t:${timestamp}:F>`,
+  //       }),
+  //     ],
+  //   });
+  // }
 
   @event()
   messageCreate(message: Message) {
