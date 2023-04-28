@@ -122,6 +122,7 @@ export async function populateCache(client: ExistenceSMP) {
 }
 
 export async function setBanner(client: ExistenceSMP) {
+  if (isCanary()) return;
   const guild = await client.guilds.fetch("191027546710736897");
 
   if (!guild.features?.includes("BANNER")) return;

@@ -94,7 +94,7 @@ export class ExistenceSMP extends Client {
   }
 
   @event()
-  messageCreate(message: Message) {
+  async messageCreate(message: Message) {
     if (
       message.channel.id == "191027546710736897" && // #chat
       message.author.id == "384428466407473153" && // mcpeachpies
@@ -113,10 +113,33 @@ export class ExistenceSMP extends Client {
         setBanner(this);
       }, 1000);
     }
+
+    if (
+      (["343903465686433793", "380478569240854528"].includes(
+        message.channelID
+      ) ||
+        isCanary()) &&
+      message.embeds.length > 0
+    ) {
+      const video = message.embeds.find((x) => x.type == "video");
+
+      if (video) {
+        const thread = await message.startThread({
+          name: "🎥 " + video.title!.slice(0, 198),
+          autoArchiveDuration: 1440,
+        });
+
+        const messageURL = `https://discord.com/channels/${message.guildID}/${thread.id}/${message.id}`;
+
+        thread.send(
+          `Welcome to the discussion thread for ${message.author.mention}'s new video, **${video.title}**! This message is the start of the thread.\n\n*You are welcome to close the thread if you believe it was created by mistake.*`
+        );
+      }
+    }
   }
 
   @event()
-  async interactionCreate(i: Interaction) {
+  interactionCreate(i: Interaction) {
     if (i.type == InteractionType.MESSAGE_COMPONENT) {
       const customId = (i.data as InteractionMessageComponentData).custom_id;
       if (customId == "screenshot_next") {
