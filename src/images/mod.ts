@@ -126,7 +126,9 @@ export async function setBanner(client: ExistenceSMP) {
 
   if (!guild.features?.includes("BANNER")) return;
 
-  const response = await fetch(getWeeklyScreenshot(getLatestWeek()).imageUrl);
+  const week = getLatestWeek();
+  const response = await fetch(getWeeklyScreenshot(week).imageUrl);
+  console.log(`[IMAGES] Setting banner to Week ${week}`);
   if (response.body) {
     const file = await Deno.open("./banner.png", {
       write: true,

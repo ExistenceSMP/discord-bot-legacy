@@ -100,7 +100,6 @@ export class ExistenceSMP extends Client {
       message.author.id == "384428466407473153" && // mcpeachpies
       message.content.match(/Week [0-9]+ vs Week [0-9]+/g) // Week X vs Week Y
     ) {
-      console.log(message.content);
       const match = (
         message.content.matchAll(/Week ([0-9]+) vs Week ([0-9]+)/g).next()
           .value as string[]
@@ -110,7 +109,9 @@ export class ExistenceSMP extends Client {
         message.attachments[1].proxy_url,
         `https://discord.com/channels/191027546710736897/191027546710736897/${message.id}`
       );
-      setBanner(this);
+      setTimeout(() => {
+        setBanner(this);
+      }, 1000);
     }
   }
 
