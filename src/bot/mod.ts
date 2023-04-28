@@ -13,6 +13,7 @@ import {
   MessageComponentInteraction,
   slash,
   ThreadChannel,
+  cron,
 } from "../deps.ts";
 import dayjs from "npm:dayjs@1.11.7";
 import weekday from "npm:dayjs@1.11.7/plugin/weekday.js";
@@ -22,6 +23,7 @@ import {
   getLatestWeek,
   getWeeklyScreenshot,
   isValidWeek,
+  setBanner,
   setCache,
   weekCache,
 } from "../images/mod.ts";
@@ -69,62 +71,27 @@ export class ExistenceSMP extends Client {
         .catch(() => `[PROD] Failed to load commands`);
     }
 
-    // if (dayjs().weekday(3).isBefore(dayjs())) {
-    //   setTimeout(
-    //     this.waddleDeeWednesday,
-    //     +dayjs().weekday(10).hour(4).minute(0).second(0).valueOf()
-    //   );
-    //   console.log(
-    //     `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
-    //       .weekday(10)
-    //       .hour(4)
-    //       .minute(0)
-    //       .second(0)
-    //       .format()}`
-    //   );
-    // } else {
-    //   setTimeout(
-    //     this.waddleDeeWednesday,
-    //     +dayjs().weekday(3).hour(4).minute(0).second(0).valueOf()
-    //   );
-    //   console.log(
-    //     `[WADDLE-DEE WEDNESDAY] Scheduled for ${dayjs()
-    //       .weekday(3)
-    //       .hour(4)
-    //       .minute(0)
-    //       .second(0)
-    //       .format()}`
-    //   );
-    // }
+    cron(
+      `0 ${new Date(946731600).getHours()} * * WED`,
+      this.waddleDeeWednesday
+    );
   }
 
-  // async waddleDeeWednesday() {
-  //   const thread = (await (
-  //     await this.guilds.fetch("191027546710736897")
-  //   ).channels.fetch("1070341143168032798")) as ThreadChannel;
+  async waddleDeeWednesday() {
+    const thread = (await (
+      await this.guilds.fetch("191027546710736897")
+    ).channels.fetch("1070341143168032798")) as ThreadChannel;
 
-  //   let timestamp = 0;
-
-  //   const wednesday = dayjs().weekday(3).hour(4).minute(0).second(0);
-  //   if (wednesday.isBefore(dayjs())) {
-  //     setTimeout(this.waddleDeeWednesday, +wednesday.weekday(10).valueOf());
-  //     timestamp = Math.floor(+wednesday.weekday(10).valueOf() / 1000);
-  //   } else {
-  //     setTimeout(this.waddleDeeWednesday, +wednesday.valueOf());
-  //     timestamp = Math.floor(+wednesday.valueOf() / 1000);
-  //   }
-
-  //   await thread.send(`<@244236398348075010>`, {
-  //     embeds: [
-  //       embed("Happy Waddle-Dee Wednesday!", {
-  //         image: {
-  //           url: "https://cdn.discordapp.com/attachments/1070341143168032798/1080487507709395089/IMG_5545.jpg",
-  //         },
-  //         description: `Next Waddle-Dee Wednesday Alert scheduled for <t:${timestamp}:F>`,
-  //       }),
-  //     ],
-  //   });
-  // }
+    await thread.send(`<@244236398348075010>`, {
+      embeds: [
+        embed("Happy Waddle-Dee Wednesday!", {
+          image: {
+            url: "https://cdn.discordapp.com/attachments/1070341143168032798/1080487507709395089/IMG_5545.jpg",
+          },
+        }),
+      ],
+    });
+  }
 
   @event()
   messageCreate(message: Message) {
@@ -143,6 +110,7 @@ export class ExistenceSMP extends Client {
         message.attachments[1].proxy_url,
         `https://discord.com/channels/191027546710736897/191027546710736897/${message.id}`
       );
+      setBanner(this);
     }
   }
 

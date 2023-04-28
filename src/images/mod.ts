@@ -4,6 +4,16 @@ import { TextChannel } from "../deps.ts";
 
 import { ExistenceSMP } from "../bot/mod.ts";
 import { isCanary } from "../index.ts";
+import { writableStreamFromWriter } from "https://deno.land/std@0.152.0/streams/conversion.ts";
+import { crop } from "https://deno.land/x/aspect_ratio@v1.0.0/crop.ts";
+import {
+  ImageMagick,
+  IMagickImage,
+  initializeImageMagick,
+  MagickFormat,
+  MagickGeometry,
+} from "https://deno.land/x/imagemagick_deno@0.0.19/mod.ts";
+import { datauri } from "https://deno.land/x/datauri@v1.1.2/mod.ts";
 
 interface WeeklyScreenshot {
   imageUrl: string;
@@ -82,6 +92,7 @@ export async function populateCache(client: ExistenceSMP) {
       ).toFixed(2) + "% Cache Populated"
     );
   }
+  setBanner(client);
   console.log(`[IMAGES] 100.00% Cache Populated (${getLatestWeek()} Weeks)`);
   if (isCanary()) {
     Deno.writeTextFile("./devcache.json", JSON.stringify(weekCache));
@@ -108,6 +119,48 @@ export async function populateCache(client: ExistenceSMP) {
     });
   }
   console.log(`[IMAGES] ${overrideCount} override images loaded`);
+}
+
+export async function setBanner(client: ExistenceSMP) {
+  const guild = await client.guilds.fetch("191027546710736897");
+
+  if (!guild.features?.includes("BANNER")) return;
+
+  const response = await fetch(getWeeklyScreenshot(getLatestWeek()).imageUrl);
+  if (response.body) {
+    const file = await Deno.open("./banner.png", {
+      write: true,
+      create: true,
+    });
+    const writableStream = writableStreamFromWriter(file);
+    await response.body.pipeTo(writableStream);
+
+    const image = await Deno.readFile("./banner.png");
+
+    const newCrop = crop(4112, 2572, "16:9");
+
+    await initializeImageMagick();
+
+    ImageMagick.read(image, (img: IMagickImage) => {
+      img.crop(
+        new MagickGeometry(newCrop[0], newCrop[1], newCrop[2], newCrop[3])
+      );
+      img.resize(1920, 1080);
+      img.write(
+        (data: Uint8Array) => Deno.writeFile("./banner.png", data),
+        MagickFormat.Png
+      );
+    });
+  }
+
+  await guild.edit({
+    banner: null,
+  });
+
+  await guild.edit({
+    banner: await datauri("./banner.png"),
+  });
+  console.log(guild.banner);
 }
 
 export function setCache(week: number, imageUrl: string, messageUrl?: string) {
