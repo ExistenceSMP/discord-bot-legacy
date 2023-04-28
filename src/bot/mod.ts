@@ -121,19 +121,47 @@ export class ExistenceSMP extends Client {
         isCanary()) &&
       message.embeds.length > 0
     ) {
+      console.log(message.embeds);
       const video = message.embeds.find((x) => x.type == "video");
 
       if (video) {
-        const thread = await message.startThread({
-          name: "🎥 " + video.title!.slice(0, 198),
-          autoArchiveDuration: 1440,
-        });
+        const isTwitch = video.url?.toLowerCase().includes("twitch");
+        const isStream =
+          isTwitch ||
+          video.url?.toLowerCase().includes("live") ||
+          video.title?.toLowerCase().includes("live") ||
+          video.description?.toLowerCase().includes("live");
 
-        const messageURL = `https://discord.com/channels/${message.guildID}/${thread.id}/${message.id}`;
+        if (isStream) {
+          if (isTwitch) {
+            const thread = await message.startThread({
+              name: "🔴 " + video.description!.slice(0, 198),
+              autoArchiveDuration: 1440,
+            });
 
-        thread.send(
-          `Welcome to the discussion thread for ${message.author.mention}'s new video, **${video.title}**! This message is the start of the thread.\n\n*You are welcome to close the thread if you believe it was created by mistake.*`
-        );
+            thread.send(
+              `Welcome to the discussion thread for ${message.author.mention}'s livestream, **${video.description}**! This message is the start of the thread.\n\n*You are welcome to close the thread if you believe it was created by mistake.*`
+            );
+          } else {
+            const thread = await message.startThread({
+              name: "🔴 " + video.title!.slice(0, 198),
+              autoArchiveDuration: 1440,
+            });
+
+            thread.send(
+              `Welcome to the discussion thread for ${message.author.mention}'s livestream, **${video.title}**! This message is the start of the thread.\n\n*You are welcome to close the thread if you believe it was created by mistake.*`
+            );
+          }
+        } else {
+          const thread = await message.startThread({
+            name: "🎥 " + video.title!.slice(0, 198),
+            autoArchiveDuration: 1440,
+          });
+
+          thread.send(
+            `Welcome to the discussion thread for ${message.author.mention}'s new video, **${video.title}**! This message is the start of the thread.\n\n*You are welcome to close the thread if you believe it was created by mistake.*`
+          );
+        }
       }
     }
   }
