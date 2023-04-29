@@ -116,13 +116,16 @@ export class ExistenceSMP extends Client {
 
     setTimeout(async () => {
       if (
+        ["343903465686433793", "380478569240854528"].includes(message.channelID)
+      )
+        console.log(message.embeds);
+      if (
         (["343903465686433793", "380478569240854528"].includes(
           message.channelID
         ) ||
           isCanary()) &&
         message.embeds.length > 0
       ) {
-        console.log(message.embeds);
         const video = message.embeds.find((x) => x.type == "video");
 
         if (video) {
