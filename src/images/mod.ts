@@ -94,6 +94,7 @@ export async function populateCache(client: ExistenceSMP) {
   }
   setBanner(client);
   console.log(`[IMAGES] 100.00% Cache Populated (${getLatestWeek()} Weeks)`);
+  console.log(`[IMAGES Writing cache to ${cachePath}`);
   Deno.writeTextFile(cachePath, JSON.stringify(weekCache));
 
   let currentOverrideWeek = -1;
