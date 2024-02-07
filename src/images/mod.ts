@@ -23,12 +23,12 @@ interface WeeklyScreenshot {
 export let weekCache: { [key: number]: WeeklyScreenshot } = {};
 
 export async function populateCache(client: ExistenceSMP) {
+  let cachePath = isCanary() ? "./devcache.json" : "/bot_images/cache.json" 
   if (
-    isCanary() &&
-    (await exists("./devcache.json")) &&
-    (await Deno.readTextFile("./devcache.json")) != ""
+    (await exists(cachePath)) &&
+    (await Deno.readTextFile(cachePath)) != ""
   ) {
-    weekCache = JSON.parse(await Deno.readTextFile("./devcache.json"));
+    weekCache = JSON.parse(await Deno.readTextFile(cachePath));
   }
 
   const chat = (await (
@@ -94,9 +94,7 @@ export async function populateCache(client: ExistenceSMP) {
   }
   setBanner(client);
   console.log(`[IMAGES] 100.00% Cache Populated (${getLatestWeek()} Weeks)`);
-  if (isCanary()) {
-    Deno.writeTextFile("./devcache.json", JSON.stringify(weekCache));
-  }
+  Deno.writeTextFile(cachePath, JSON.stringify(weekCache));
 
   let currentOverrideWeek = -1;
   let overrideCount = 0;
