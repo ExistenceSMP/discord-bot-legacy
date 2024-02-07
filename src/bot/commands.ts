@@ -16,11 +16,7 @@ export const commands: SlashCommandPartial[] = [
           {
             name: "Community Server 2",
             value: "cs2",
-          },
-          {
-            name: "Project Create",
-            value: "projectcreate",
-          },
+          }
         ],
         type: SlashCommandOptionType.STRING,
         required: false,
@@ -38,11 +34,7 @@ export const commands: SlashCommandPartial[] = [
           {
             name: "Community Server 2",
             value: "cs2",
-          },
-          {
-            name: "Project Create",
-            value: "projectcreate",
-          },
+          }
         ],
         type: SlashCommandOptionType.STRING,
         required: true,

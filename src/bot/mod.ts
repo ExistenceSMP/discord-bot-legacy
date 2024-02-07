@@ -61,7 +61,7 @@ export class ExistenceSMP extends Client {
         .catch(() => `[CANARY] Failed to load commands`);
     } else {
       this.setPresence({
-        name: "Community Server 2",
+        name: "Community Server 2 & Project BTA",
         type: 0,
       });
 

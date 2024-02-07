@@ -1,3 +1,4 @@
 .env
 devcache.json
 banner.png
+.DS_Store
