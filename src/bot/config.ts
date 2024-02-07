@@ -12,12 +12,5 @@ export const contributors: Contributor[] = [
       name: "iGalaxy",
       id: "1085089904448507914",
     },
-  },
-  {
-    id: "159704489970892800",
-    emoji: {
-      name: "Jippertje",
-      id: "1085089903165046804",
-    },
-  },
+  }
 ];

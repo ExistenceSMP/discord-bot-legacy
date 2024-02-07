@@ -297,7 +297,7 @@ export class ExistenceSMP extends Client {
       default: {
         i.reply({
           embeds: [
-            embed("Existence SMP Discord Bot", {
+            embed("Existence Community Discord Bot", {
               thumbnail: {
                 url: this.user?.avatarURL(),
               },
@@ -305,7 +305,7 @@ export class ExistenceSMP extends Client {
                 url: getWeeklyScreenshot(getLatestWeek()).imageUrl,
               },
               description:
-                "The Existence SMP Discord Bot is a multi-purpose Discord bot created for the Existence SMP Community Discord server.",
+                "The Existence Community Discord Bot is a multi-purpose Discord bot created for the Existence Community Discord server.",
               fields: [
                 {
                   name: "Useful Links",
@@ -313,8 +313,8 @@ export class ExistenceSMP extends Client {
                     `<:logo_existence_smp_s2:952367758820126790> [Website](https://existencesmp.com)`,
                     `:scroll: [Rules](https://existencesmp.com/rules)`,
                     "",
-                    `:technologist: [Source Code](https://github.com/ExistenceSMP/existence-smp-discord-bot)`,
-                    `:bug: [Bug Reports](https://github.com/ExistenceSMP/existence-smp-discord-bot/issues)`,
+                    `:technologist: [Source Code](https://github.com/ExistenceSMP/discord-bot-legacy)`,
+                    `:bug: [Bug Reports](https://github.com/ExistenceSMP/discord-bot-legacy/issues)`,
                   ].join("\n"),
                   inline: true,
                 },
@@ -331,6 +331,10 @@ export class ExistenceSMP extends Client {
                     `<:icon_youtube:244472434172887040> [youtube.com/ExistenceSMP](https://youtube.com/ExistenceSMP)`,
                     `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMP](https://twitter.com/ExistenceSMP)`,
                     `<:icon_twitter:244464821850996736> [twitter.com/ExistenceSMPQ](https://twitter.com/ExistenceSMPQ)`,
+                    `<:mastodon:1204717337823944745> [farlands.cafe/@ExistenceSMP](https://farlands.cafe/@ExistenceSMP)`,
+                    `<:mastodon:1204717337823944745> [farlands.cafe/@ExistenceSMPQ](https://farlands.cafe/@ExistenceSMPQ)`,
+                    `<:bluesky:1204717500676309012> [bsky.app/profile/existencesmp.com](https://bsky.app/profile/existencesmp.com)`,
+                    `<:bluesky:1204717500676309012> [bsky.app/profile/existencesmpq.bsky.social](https://bsky.app/profile/existencesmpq.bsky.social)`,
                     `<:icon_patreon:368253238618619905> [patreon.com/ExistenceSMP](https://patreon.com/ExistenceSMP)`,
                     `<:icon_discord:244473644871450625> [existencesmp.com/discord](https://existencesmp.com/discord)`,
                   ].join("\n"),
